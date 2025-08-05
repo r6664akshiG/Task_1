@@ -1,89 +1,77 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Patient Portal</title>
+    <title>PDF Upload Portal</title>
 </head>
 <body>
-    <h1>UPLOAD YOUR MEDICAL DOCUMENT </h1>
+    <h2>Upload Medical PDF</h2>
 
-    <input type="file" id="fileInput" accept=".pdf" />
+    <input type="file" id="fileInput" accept=".pdf">
     <button onclick="uploadFile()">Upload</button>
-
     <p id="message"></p>
 
+    <ul id="fileList"></ul>
+
     <script>
-
-
-        async function uploadFile() 
-        {
+        // Upload 
+        async function uploadFile() {
             const file = document.getElementById('fileInput').files[0];
-            if (!file) 
-            
-            {
-               
+
+            if (!file) {
                 document.getElementById('message').innerText = "Please select a PDF file.";
                 return;
             }
 
             const formData = new FormData();
-           
             formData.append('file', file);
 
-            try
-            
-            {
-                
-                const response = await fetch('http://127.0.0.1:5000/documents/upload',
-                 {
+            try {
+                const res = await fetch('http://127.0.0.1:5000/documents/upload', {
                     method: 'POST',
                     body: formData
                 });
-
-                const result = await response.json();
-               
-               
+                const result = await res.json();
                 document.getElementById('message').innerText = result.message;
-            } 
-            
-            catch (error) 
-            
-            {
-                
-                document.getElementById('message').innerText = "Something went wrong!";
+                loadFiles(); 
+            } catch {
+                document.getElementById('message').innerText = "Upload failed!";
             }
         }
 
-        async function loadFiles(){
-            try {
-                const response = await fetch('http://127.0.0.1:5000/documents/upload');
-                const files = await res.json();
-               
-                    <li>
-                        <button onclick='downloadFile(${file.id})'>Download</button>
-                        <button onclick='deleteFile(${file.id})'>Delete</button>
-                    </li>
-                ).join('');
-            
-                }
-                catch(error)
-                {
-                    console.error("Error",error);
-                }
-             document.getElementById('fileList').innerHTML=fileList;
-               
-        async function downloadFile()
-            {
-                 window.open(`http://127.0.0.1:5000/documents/${id}`);
-}
+        
+        async function loadFiles() {
+            const res = await fetch('http://127.0.0.1:5000/documents');
+            const files = await res.json();
 
-        async function deleteFile(id)
-{
-              await fetch(`http://127.0.01:5000/documents/${id}`,{method:'DELETE'});
-}
+            const list = document.getElementById('fileList');
+            list.innerHTML = '';
+
+            files.forEach(file => {
+                const item = document.createElement('li');
+
+                
+
+
+                //delete
+                const deleteBtn = document.createElement('button');
+                deleteBtn.innerText = 'Delete';
+                deleteBtn.onclick = async () => {
+                    await fetch(`http://127.0.0.1:5000/documents/${file.id}`, { method: 'DELETE' });
+                    loadFiles(); 
+                };
+
+                // Download 
+                const downloadBtn = document.createElement('button');
+                downloadBtn.innerText = 'Download';
+                downloadBtn.onclick = () => {
+                    window.open(`http://127.0.0.1:5000/documents/${file.id}`);
+                };
+                
+            });
         }
-    
 
+        
+        loadFiles();
     </script>
 </body>
 </html>
-
