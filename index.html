@@ -10,7 +10,6 @@
     <button onclick="uploadFile()">Upload</button>
     <p id="message"></p>
 
-    <ul id="fileList"></ul>
 
     <script>
         // Upload 
@@ -49,10 +48,7 @@
             files.forEach(file => {
                 const item = document.createElement('li');
 
-                
-
-
-                //delete
+                //Delete
                 const deleteBtn = document.createElement('button');
                 deleteBtn.innerText = 'Delete';
                 deleteBtn.onclick = async () => {
@@ -71,7 +67,8 @@
         }
 
         
-        loadFiles();
+    
     </script>
 </body>
 </html>
+
