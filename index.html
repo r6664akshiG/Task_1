@@ -1,40 +1,87 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>PDF Upload</title>
+    <title>Patient Portal</title>
 </head>
 <body>
-    <h2>Upload PDF</h2>
-    <input type="file" id="fileInput" accept=".pdf">
+    <h1>UPLOAD YOUR MEDICAL DOCUMENT </h1>
+
+    <input type="file" id="fileInput" accept=".pdf" />
     <button onclick="uploadFile()">Upload</button>
+
     <p id="message"></p>
 
     <script>
-        async function uploadFile() {
-            const file = document.getElementById('fileInput').files[0];
-            const message = document.getElementById('message');
 
-            if (!file || file.type !== "application/pdf") {
-                message.innerText = "Please upload a PDF file.";
+
+        async function uploadFile() 
+        {
+            const file = document.getElementById('fileInput').files[0];
+            if (!file) 
+            
+            {
+               
+                document.getElementById('message').innerText = "Please select a PDF file.";
                 return;
             }
 
             const formData = new FormData();
+           
             formData.append('file', file);
 
-            try {
-                const response = await fetch('http://127.0.0.1:5000/documents/upload', 
-    {
+            try
+            
+            {
+                
+                const response = await fetch('http://127.0.0.1:5000/documents/upload',
+                 {
                     method: 'POST',
                     body: formData
                 });
 
                 const result = await response.json();
-                message.innerText = result.message;
-            } catch (error) {
-                message.innerText = "Something went wrong!";
+               
+               
+                document.getElementById('message').innerText = result.message;
+            } 
+            
+            catch (error) 
+            
+            {
+                
+                document.getElementById('message').innerText = "Something went wrong!";
             }
         }
+
+        async function loadFiles(){
+            try {
+                const response = await fetch('http://127.0.0.1:5000/documents/upload');
+                const files = await res.json();
+                document.getElementById('fileList').innerHTML=files.map(file=>
+                    <li>
+                        <button onclick='downloadFile(${file.id})'>Download</button>
+                        <button onclick='deleteFile(${file.id})'>Delete</button>
+                    </li>
+                ).join('');
+            
+                }
+                catch(error)
+                {
+                    console.error("Error",error);
+                }
+               
+        async function downloadFile()
+            {
+                 window.open(`http://127.0.0.1:5000/documents/${id}`);
+}
+
+        async function deleteFile(id)
+{
+              await fetch(`http://127.0.01:5000/documents/${id}`,{method:'DELETE'});
+}
+        }
+    
+
     </script>
 </body>
 </html>
